@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import org.apache.log4j.Logger;
@@ -76,7 +77,7 @@ public class Dispatcher{
  	 *
  	 * @return the max number employees
  	 */
-	public static Integer getMaxNumberEmployees(){
+	public Integer getMaxNumberEmployees(){
     	return MAX_NUMBER_DIRECTORS + MAX_NUMBER_SUPERVISORS + MAX_NUMBER_OPERATORS;
     }
 	
@@ -102,14 +103,9 @@ public class Dispatcher{
 	
 	public void setEmployeesList(){
 		
-		IntStream.range(0, MAX_NUMBER_OPERATORS).forEach(
-				i -> addEmployeeToQueue(new Employee(EmployeeType.OPERATOR, i)));
-		
-		IntStream.range(0, MAX_NUMBER_SUPERVISORS).forEach(
-				i -> addEmployeeToQueue(new Employee(EmployeeType.SUPERVISOR, i)));
-		
-		IntStream.range(0, MAX_NUMBER_DIRECTORS).forEach(
-				i -> addEmployeeToQueue(new Employee(EmployeeType.DIRECTOR, i)));
+		IntStream.range(0, MAX_NUMBER_OPERATORS).forEach(i -> addEmployeeToQueue(new Employee(EmployeeType.OPERATOR, i)));
+		IntStream.range(0, MAX_NUMBER_SUPERVISORS).forEach(i -> addEmployeeToQueue(new Employee(EmployeeType.SUPERVISOR, i)));
+		IntStream.range(0, MAX_NUMBER_DIRECTORS).forEach(i -> addEmployeeToQueue(new Employee(EmployeeType.DIRECTOR, i)));
 	}
 	
 	/**
@@ -156,7 +152,7 @@ public class Dispatcher{
 	 *
 	 * @return the available employee
 	 */
-	private synchronized Employee getAvailableEmployee(Call call) {
+	public synchronized Employee getAvailableEmployee(Call call) {
 		Optional<Employee> employee;
 		do{
 			employee = findAvailableEmployeeByType(EmployeeType.OPERATOR);
@@ -212,5 +208,30 @@ public class Dispatcher{
 	public void shutDownExecutorService(){
 		executorService.shutdown();
 	}
+	
+	/**
+	 * Gets the employees list.
+	 *
+	 * @return the employees list
+	 */
+	public List<Employee> getEmployeesList(){
+		return employeesList;
+	}
+		
+	
+	/**
+	 * Wait for executor service finish.
+	 * 
+	 * <p> This method is used to wait until all task have completed
+	 * execution in test class or the timeout occurs. 
+	 */
+	public void waitForExecutorServiceFinish() {
+        try {
+        	executorService.awaitTermination(300, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            Thread.currentThread().interrupt();
+        }
+    }
 
 }

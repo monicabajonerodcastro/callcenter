@@ -1,5 +1,7 @@
 package com.almundo.callcenter.handle;
 
+import java.util.stream.IntStream;
+
 import org.apache.log4j.BasicConfigurator;
 
 import com.almundo.callcenter.model.Call;
@@ -31,9 +33,8 @@ public class CallCenter{
     	
     	Dispatcher dispatcher = new Dispatcher();
     	dispatcher.setEmployeesList();
-    	for(int i = 0 ; i < CALLS; i++){
-    		dispatcher.dispatcherCall(new Call(CALL_NAME + i));
-    	}
-    	dispatcher.shutDownExecutorService();
+    	
+	    IntStream.range(0, CALLS).forEach(i -> dispatcher.dispatcherCall(new Call(CALL_NAME+i)));
+	    	dispatcher.shutDownExecutorService();
     }
 }
