@@ -7,14 +7,13 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
+import java.util.stream.IntStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import com.almundo.callcenter.model.Call;
 import com.almundo.callcenter.model.Employee;
 import com.almundo.callcenter.model.EmployeeType;
-import com.almundo.callcenter.utils.Constants;
 
 /**
  * The Class Dispatcher.
@@ -24,8 +23,20 @@ import com.almundo.callcenter.utils.Constants;
 
 public class Dispatcher{
 	
+	/** The Constant MAX_NUMBER_OPERATORS. The number of available operators */
+	private final static int MAX_NUMBER_OPERATORS = 4;
+	
+	/** The Constant MAX_NUMBER_SUPERVISORS. The number of available supervisors */
+	private final static int MAX_NUMBER_SUPERVISORS = 2;
+	
+	/** The Constant MAX_NUMBER_DIRECTORS. The number of available directors */
+	private final static int MAX_NUMBER_DIRECTORS = 1;
+	
+	/** The Constant NUMBER_THREADS_POOL. */
+	public final static int NUMBER_THREADS_POOL = 10;
+		
 	/** The Constant logger. */
-	private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
+	final static Logger logger = Logger.getLogger(Dispatcher.class);
 	
     /** The executor service: Automates the execution of class */
     private ExecutorService executorService;
@@ -54,11 +65,20 @@ public class Dispatcher{
 	 */
 	public Dispatcher() {
 		super();
-		this.executorService = Executors.newFixedThreadPool(Constants.NUMBER_THREADS_POOL);
-		this.semaphore = new Semaphore(Constants.getMaxNumberEmployees(), true);
+		this.executorService = Executors.newFixedThreadPool(NUMBER_THREADS_POOL);
+		this.semaphore = new Semaphore(getMaxNumberEmployees(), true);
 		this.callsQueue = new ConcurrentLinkedQueue<>();
 		this.employeesList = new ArrayList<>();
 	}
+	
+	 /**
+ 	 * Gets the max number employees.
+ 	 *
+ 	 * @return the max number employees
+ 	 */
+	public static Integer getMaxNumberEmployees(){
+    	return MAX_NUMBER_DIRECTORS + MAX_NUMBER_SUPERVISORS + MAX_NUMBER_OPERATORS;
+    }
 	
 	/**
 	 * Adds the employee to queue.
@@ -70,6 +90,26 @@ public class Dispatcher{
 	 */
 	public void addEmployeeToQueue(Employee employee){
 		employeesList.add(employee);
+	}
+	
+	/**
+	 * Sets the employees list.
+	 * 
+	 * <p>The employees list filled with the number of employees defined in the Constants class.
+	 *
+	 * @param dispatcher the new employees queue
+	 */
+	
+	public void setEmployeesList(){
+		
+		IntStream.range(0, MAX_NUMBER_OPERATORS).forEach(
+				i -> addEmployeeToQueue(new Employee(EmployeeType.OPERATOR, i)));
+		
+		IntStream.range(0, MAX_NUMBER_SUPERVISORS).forEach(
+				i -> addEmployeeToQueue(new Employee(EmployeeType.SUPERVISOR, i)));
+		
+		IntStream.range(0, MAX_NUMBER_DIRECTORS).forEach(
+				i -> addEmployeeToQueue(new Employee(EmployeeType.DIRECTOR, i)));
 	}
 	
 	/**
@@ -116,7 +156,7 @@ public class Dispatcher{
 	 *
 	 * @return the available employee
 	 */
-	private synchronized Employee getAvailableEmployee() {
+	private synchronized Employee getAvailableEmployee(Call call) {
 		Optional<Employee> employee;
 		do{
 			employee = findAvailableEmployeeByType(EmployeeType.OPERATOR);
@@ -130,11 +170,17 @@ public class Dispatcher{
 		
 		changeEmployeeAvailability(employee.get());
 		
+		logger.info("The employee "+employee.get().getName()+" will attend the "+call.getName());
 		return employee.get();
 	}
 	
 	/**
 	 * Dispatcher call.
+	 * 
+	 * <p> The calls queue is filled with incoming calls. The submit of executor service 
+	 * asks for a turn of the semaphore. An available employee is sought. A thread is 
+	 * active while the duration of the call. When the call is over, the availability of 
+	 * the employee changes.
 	 */
 	public void dispatcherCall(Call call){
 		
@@ -144,12 +190,11 @@ public class Dispatcher{
 		executorService.submit(() -> {
 			try {
 				semaphore.acquire();
-				Employee activeEmployee = getAvailableEmployee();
+				Employee activeEmployee = getAvailableEmployee(call);
 				
-				logger.info("The employee "+activeEmployee.getName()+" will attend the "+call.getName());
-				Thread.sleep(call.getDuration() * Constants.MILISECONDS);
+				Thread.sleep(call.getDuration() * 1000);
+				
 				changeEmployeeAvailability(activeEmployee);
-				
 				logger.info("The "+call.getName()+" ended in "+call.getDuration()+" seconds");
 				semaphore.release();
 			} catch (InterruptedException e) {
@@ -160,6 +205,9 @@ public class Dispatcher{
 	
 	/**
 	 * Shut down executor service.
+	 * 
+	 * <p> When all the calls were answered, the executor service stops.
+	 * 
 	 */
 	public void shutDownExecutorService(){
 		executorService.shutdown();

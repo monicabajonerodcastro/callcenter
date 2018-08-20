@@ -1,12 +1,13 @@
 package com.almundo.callcenter.model;
 
-import com.almundo.callcenter.utils.Constants;
-
 /**
  * The Class Employee.
  * This class allows instantiating the employee object.
  */
 public class Employee {
+	
+	/** The Constant SCRIPT_SEPARATOR. */
+	public static final String SCRIPT_SEPARATOR = "_";
 	
 	/** The employee type. */
 	private EmployeeType employeeType;
@@ -26,7 +27,7 @@ public class Employee {
 	public Employee(EmployeeType employeType, int count) {
 		super();
 		this.employeeType = employeType;
-		this.name = employeType.name() + Constants.SCRIPT_SEPARATOR + count;
+		this.name = employeType.name() + SCRIPT_SEPARATOR + count;
 		this.isAvailable = true;
 	}
 

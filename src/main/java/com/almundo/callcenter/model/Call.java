@@ -2,13 +2,17 @@ package com.almundo.callcenter.model;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import com.almundo.callcenter.utils.Constants;
-
 /**
  * The Class Call.
  * This class allows instantiating the call object.
  */
 public class Call {
+	
+	/** The Constant MIN_CALL_SECONDS. */
+	public static final int MIN_CALL_SECONDS = 5;
+	
+	/** The Constant MAX_CALL_SECONDS. */
+	public static final int MAX_CALL_SECONDS = 10;
 	
 	/** The call name. */
 	private String name;
@@ -22,7 +26,7 @@ public class Call {
 	public Call(String name) {
 		super();
 		this.name = name;
-		this.duration = ThreadLocalRandom.current().nextInt(Constants.MIN_CALL_SECONDS, Constants.MAX_CALL_SECONDS + 1);
+		this.duration = ThreadLocalRandom.current().nextInt(MIN_CALL_SECONDS, MAX_CALL_SECONDS + 1);
 	}
 
 	/**
