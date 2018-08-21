@@ -95,11 +95,12 @@ public class DispatcherTest {
 		dispatcher.addEmployeeToQueue(new Employee(EmployeeType.SUPERVISOR, 0));
 		dispatcher.addEmployeeToQueue(new Employee(EmployeeType.DIRECTOR, 0));
 		
+		IntStream.range(0, 7).forEach(i -> dispatcher.dispatchCall(new Call("Call_" + i)));
+		
 		Optional<Employee> nextAvailableEmployee = dispatcher.getEmployeesList().stream().filter(e -> e.isAvailable()).findFirst();
 		assertTrue(nextAvailableEmployee.isPresent());
 		assertEquals(nextAvailableEmployee.get().getEmployeeType(), EmployeeType.OPERATOR);
-
-		IntStream.range(0, 7).forEach(i -> dispatcher.dispatchCall(new Call("Call_" + i)));
+		
 		dispatcher.shutDownExecutorService();
 		dispatcher.waitForExecutorServiceFinish();
 	}
