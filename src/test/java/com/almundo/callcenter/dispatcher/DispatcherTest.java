@@ -73,7 +73,7 @@ public class DispatcherTest {
 	/**
 	 * Dispatcher call test with more employees than calls.
 	 * 
-	 * There should find an operator-type employee.
+	 * There should find an operators-type employee.
 	 */
 	@Test
 	public void dispatcherCallTestWithMoreEmployeesThanCalls() {
