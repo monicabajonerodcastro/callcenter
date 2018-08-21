@@ -48,21 +48,6 @@ public class DispatcherTest {
 	}
 
 	/**
-	 * Dispatcher call with defined configuration in class.
-	 */
-	@Test
-	public void dispatcherCallWithConfigurationClass() {
-
-		logger.info("***** Testing dispatcherCallWithConfigurationClass *****");
-
-		dispatcher.fillEmployeesList();
-
-		IntStream.range(0, 10).forEach(i -> dispatcher.dispatchCall(new Call("Call_" + i)));
-		dispatcher.shutDownExecutorService();
-		dispatcher.waitForExecutorServiceFinish();
-	}
-
-	/**
 	 * Dispatcher call test with more calls than employees.
 	 */
 	@Test
