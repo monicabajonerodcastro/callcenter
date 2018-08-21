@@ -204,7 +204,7 @@ public class Dispatcher {
 				logger.info("The " + call.getName() + " ended in " + call.getDuration() + " seconds");
 				semaphore.release();
 			} catch (InterruptedException e) {
-				logger.error("An exception ocurred: " + e.getMessage());
+				logger.error("An exception ocurred: " + e);
 			}
 		});
 	}
@@ -225,7 +225,7 @@ public class Dispatcher {
 	 *
 	 * @return the employees list
 	 */
-	public List<Employee> getEmployeesList() {
+	public synchronized List<Employee> getEmployeesList() {
 		return employeesList;
 	}
 
@@ -240,7 +240,7 @@ public class Dispatcher {
 		try {
 			executorService.awaitTermination(300, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
-			logger.error("An exception ocurred: " + e.getMessage());
+			logger.error("An exception ocurred: " + e);
 			Thread.currentThread().interrupt();
 		}
 	}
