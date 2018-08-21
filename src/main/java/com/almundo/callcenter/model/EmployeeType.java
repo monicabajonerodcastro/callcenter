@@ -1,40 +1,42 @@
 package com.almundo.callcenter.model;
 
 /**
- * The Enum EmployeeType.
- * This Enum represent the employee type
+ * The Enum EmployeeType. This Enum represent the employee type
+ * 
+ * @author Monica Bajonero
  */
 public enum EmployeeType {
-	
+
 	/** The operator. */
 	OPERATOR("Operator"),
-	
+
 	/** The supervisor. */
 	SUPERVISOR("Supervisor"),
-	
+
 	/** The director. */
 	DIRECTOR("Director");
-	
+
 	/** The type name. */
 	private String typeName;
-	
+
 	/**
 	 * Instantiates a new employee type.
 	 *
-	 * @param typeName the type name
+	 * @param typeName
+	 *            the type name
 	 */
-	EmployeeType(String typeName){
-		
+	EmployeeType(String typeName) {
+
 		this.typeName = typeName;
-		
+
 	}
-	
+
 	/**
 	 * Type name.
 	 *
 	 * @return the string
 	 */
-	public String typeName(){
+	public String typeName() {
 		return typeName;
 	}
 

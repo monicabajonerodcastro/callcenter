@@ -3,20 +3,22 @@ package com.almundo.callcenter.model;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * The Class Call.
- * This class allows instantiating the call object.
+ * The Class Call. This class represents the incoming calls. The object has a
+ * name and duration
+ * 
+ * @author Monica Bajonero
  */
 public class Call {
-	
+
 	/** The Constant MIN_CALL_SECONDS. */
 	public static final int MIN_CALL_SECONDS = 5;
-	
+
 	/** The Constant MAX_CALL_SECONDS. */
 	public static final int MAX_CALL_SECONDS = 10;
-	
+
 	/** The call name. */
 	private String name;
-	
+
 	/** The call duration. */
 	private Integer duration;
 
@@ -41,7 +43,8 @@ public class Call {
 	/**
 	 * Sets the name.
 	 *
-	 * @param name the new name
+	 * @param name
+	 *            the new name
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -59,7 +62,8 @@ public class Call {
 	/**
 	 * Sets the duration.
 	 *
-	 * @param duration the new duration
+	 * @param duration
+	 *            the new duration
 	 */
 	public void setDuration(Integer duration) {
 		this.duration = duration;
