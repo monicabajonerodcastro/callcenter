@@ -49,6 +49,8 @@ public class DispatcherTest {
 
 	/**
 	 * Dispatcher call test with more calls than employees.
+	 * 
+	 * <p> There should not be any available employee because they are all busy attending calls
 	 */
 	@Test
 	public void dispatcherCallTestWithMoreCallsThanEmployees() {
@@ -70,6 +72,8 @@ public class DispatcherTest {
 
 	/**
 	 * Dispatcher call test with more employees than calls.
+	 * 
+	 * There should find an operator-type employee.
 	 */
 	@Test
 	public void dispatcherCallTestWithMoreEmployeesThanCalls() {
@@ -84,7 +88,7 @@ public class DispatcherTest {
 		
 		Optional<Employee> nextAvailableEmployee = dispatcher.getEmployeesList().stream().filter(e -> e.isAvailable()).findFirst();
 		assertTrue(nextAvailableEmployee.isPresent());
-		assertEquals(nextAvailableEmployee.get().getEmployeeType(), EmployeeType.OPERATOR);
+		assertEquals(EmployeeType.OPERATOR, nextAvailableEmployee.get().getEmployeeType());
 		
 		dispatcher.shutDownExecutorService();
 		dispatcher.waitForExecutorServiceFinish();
